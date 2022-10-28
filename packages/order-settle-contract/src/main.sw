@@ -1,5 +1,6 @@
 contract;
 use order::LimitOrder;
+
 abi OrderSettler {
     fn take(order: LimitOrder);
     fn make(order: LimitOrder);
