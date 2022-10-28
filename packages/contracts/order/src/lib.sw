@@ -4,7 +4,7 @@ library order;
 pub enum Order {
     LimitOrder,
     RFQOrder,
-    NFTOrder
+    NFTOrder,
 }
 // inspired by the 0x limit order 
 pub struct LimitOrder {
