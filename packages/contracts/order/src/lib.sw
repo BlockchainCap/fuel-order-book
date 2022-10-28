@@ -1,10 +1,9 @@
 library order;
 
-
 pub enum Order {
-    LimitOrder,
-    RFQOrder,
-    NFTOrder,
+    Limit: LimitOrder,
+    RFQ: RFQOrder,
+    NFT: NFTOrder,
 }
 // inspired by the 0x limit order 
 pub struct LimitOrder {
@@ -19,9 +18,8 @@ pub struct LimitOrder {
     fee_recipient: Address,
     // pool:  
     expiry: u64,
-    salt: u64 // arbitrary salt for uniqueness in order hash
+    salt: u64, // arbitrary salt for uniqueness in order hash
 }
-
 
 pub struct RFQOrder {
     maker_token: Address,
@@ -33,7 +31,7 @@ pub struct RFQOrder {
     taker: Address,
     // pool:  
     expiry: u64,
-    salt: u64 // arbitrary salt for uniqueness in order hash
+    salt: u64, // arbitrary salt for uniqueness in order hash
 }
 
 // not sure how we do this without accessing some state
@@ -47,5 +45,5 @@ pub struct NFTOrder {
     fungible_token_amount: u64,
     // fees
     nft_token: Address,
-    nft_id: Address
+    nft_id: Address,
 }
