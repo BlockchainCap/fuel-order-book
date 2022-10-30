@@ -1,7 +1,8 @@
 [project]
 authors = ["Ryan Sproule"]
-entry = "main.sw"
+entry = "order-predicate.sw"
 license = "Apache-2.0"
 name = "order-predicate"
 
 [dependencies]
+order = {path = "../order"}

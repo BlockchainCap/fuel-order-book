@@ -1,6 +1,6 @@
 use fuels::{
     prelude::TxParameters,
-    tx::{Input, Output, Transaction, Bytes32, AssetId, Address, Word},
+    tx::{AssetId, Bytes32, Input, Output, Transaction, Address, Word},
 };
 
 const MIN_GAS: u64 = 100_000;
@@ -9,7 +9,7 @@ pub async fn get_make_order_script() -> Vec<u8> {
     let script_bytecode = std::fs::read(MAKE_ORDER_SCRIPT_BINARY).unwrap();
     script_bytecode
 }
-const TAKE_ORDER_SCRIPT_BINARY: &str = "../order-script/out/debug/make-order.bin";
+const TAKE_ORDER_SCRIPT_BINARY: &str = "../order-script/out/debug/take-order.bin";
 pub async fn get_take_order_script() -> Vec<u8> {
     let script_bytecode = std::fs::read(TAKE_ORDER_SCRIPT_BINARY).unwrap();
     script_bytecode
@@ -23,7 +23,7 @@ pub async fn build_make_order_tx(
 ) -> Transaction {
     let script_bytecode = get_make_order_script().await;
     let mut tx_outputs: Vec<Output> = Vec::new();
-    
+
     // TODO: probably dont need this because we arent calling a contract
     tx_outputs.push(Output::Contract {
         input_index: 0u8,
