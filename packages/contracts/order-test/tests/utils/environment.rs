@@ -1,10 +1,13 @@
 use fuel_core_interfaces::model::Coin;
 use fuels::{
-    prelude::Provider,
-    signers::WalletUnlocked,
+    contract::script::Script,
+    prelude::{Provider, TxParameters},
+    signers::{Signer, WalletUnlocked},
     test_helpers::{setup_single_asset_coins, setup_test_client, Config},
-    tx::{Address, AssetId, Input, Receipt, TxPointer, UtxoId, Word},
+    tx::{Address, AssetId, Input, Output, Receipt, Transaction, TxPointer, UtxoId, Word},
 };
+
+use super::builder::{build_make_order_tx, build_take_order_tx};
 
 pub async fn setup_environment(
     coin: (Word, AssetId),
@@ -46,8 +49,38 @@ pub async fn make_order(
     wallet: &WalletUnlocked,
     gas_coin: Input,
     optional_inputs: &[Input],
-    optional_outputs: &[Input],
+    optional_outputs: &[Output],
 ) -> Vec<Receipt> {
-    let mut tx = 
+    let mut tx = build_make_order_tx(
+        gas_coin,
+        optional_inputs,
+        optional_outputs,
+        TxParameters::default(),
+    )
+    .await;
+
+    sign_and_call_tx(wallet, &mut tx).await
 }
-pub async fn take_order() -> Vec<Receipt> {}
+pub async fn take_order(
+    wallet: &WalletUnlocked,
+    gas_coin: Input,
+    optional_inputs: &[Input],
+    optional_outputs: &[Output],
+) -> Vec<Receipt> {
+    let mut tx = build_take_order_tx(
+        gas_coin,
+        optional_inputs,
+        optional_outputs,
+        TxParameters::default(),
+    )
+    .await;
+
+    sign_and_call_tx(wallet, &mut tx).await
+}
+
+pub async fn sign_and_call_tx(wallet: &WalletUnlocked, tx: &mut Transaction) -> Vec<Receipt> {
+    let provider = wallet.get_provider().unwrap();
+    wallet.sign_transaction(tx).await.unwrap();
+    let script = Script::new(tx.clone());
+    script.call(provider).await.unwrap()
+}
