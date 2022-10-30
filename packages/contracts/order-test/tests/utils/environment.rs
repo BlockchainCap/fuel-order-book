@@ -1,7 +1,7 @@
 use fuel_core_interfaces::model::Coin;
 use fuels::{
     contract::script::Script,
-    prelude::{Provider, TxParameters},
+    prelude::{Bech32Address, Provider, TxParameters},
     signers::{Signer, WalletUnlocked},
     test_helpers::{setup_single_asset_coins, setup_test_client, Config},
     tx::{Address, AssetId, Input, Output, Receipt, Transaction, TxPointer, UtxoId, Word},
@@ -11,7 +11,7 @@ use super::builder::{build_make_order_tx, build_take_order_tx};
 
 pub async fn setup_environment(
     coin: (Word, AssetId),
-) -> (WalletUnlocked, WalletUnlocked, Vec<Input>) {
+) -> (WalletUnlocked, WalletUnlocked, Vec<Input>, Provider) {
     let mut wallet = WalletUnlocked::new_random(None);
     let mut wallet2 = WalletUnlocked::new_random(None);
     // give the wallets the funds they need. might need to have simple token contract to do minting
@@ -42,7 +42,7 @@ pub async fn setup_environment(
             maturity: 0,
         })
         .collect();
-    (wallet, wallet2, coin_inputs)
+    (wallet, wallet2, coin_inputs, provider)
 }
 
 pub async fn make_order(
@@ -61,6 +61,32 @@ pub async fn make_order(
 
     sign_and_call_tx(wallet, &mut tx).await
 }
+
+// pub async fn send_coins_to_predicate(
+//     wallet: &WalletUnlocked,
+//     predicate_root: Bech32Address,
+//     amount: u64,
+//     asset_id: AssetId,
+// ) -> (String, Vec<Receipt>) {
+// }
+
+pub async fn spend_predicate(
+    wallet: &WalletUnlocked,
+    predicate_root: Address,
+    amount: u64,
+    asset_id: AssetId,
+) -> (String, Vec<Receipt>) {
+    wallet
+        .transfer(
+            &Bech32Address::from(predicate_root),
+            amount,
+            asset_id,
+            TxParameters::default(),
+        )
+        .await
+        .unwrap()
+}
+
 pub async fn take_order(
     wallet: &WalletUnlocked,
     gas_coin: Input,
