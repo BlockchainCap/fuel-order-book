@@ -32,14 +32,9 @@ mod success {
         let coin = (DEFAULT_COIN_AMOUNT, AssetId::default());
         // might need to init another coin to correctly simulate the make/take
         let (maker, taker, coin_inputs, provider) = env::setup_environment(coin).await;
-
         let predicate = Predicate::load_from(PREDICATE).unwrap();
-
-        // let (_bytecode, predicate_root) = get_contract_message_predicate().await;
-        // let (tx, receipt) =
-        //     env::send_coins_to_predicate(&maker, predicate.address(), coin.0, coin.1).await;
-
-        let (tx, rec) = maker
+        // create the order (fund the predicate)
+        let (_tx, _rec) = maker
             .transfer(predicate.address(), coin.0, coin.1, TxParameters::default())
             .await
             .unwrap();
@@ -52,59 +47,61 @@ mod success {
         assert!(balance == 0);
         assert!(predicate_balance == coin.0);
 
+        // this is the way i should do this, check the script. probably need to add some
+        // inputs to this
         let _receipt = env::take_order(&taker, coin_inputs[0].clone(), &vec![], &vec![]).await;
+
         //
-        // 
-        // 
-        // 
-        // 
+        //
+        //
+        //
+        //
         //  below here is drafting, doesnt actually work, above we use a script
 
-
         // spend the predicate with taker
-        let make_coin: [u8; 32] = coin.1.into();
-        let take_coin: [u8; 32] = coin.1.into();
-        // currently cant pass any friendly data in the predicate
-        // data, so will just pass a byte array
-        let order = LimitOrder {
-            maker_token: Bits256(make_coin),
-            taker_token: Bits256(take_coin),
-            maker_amount: coin.0,
-            taker_amount: coin.0,
-            // taker_token_fee: 0,
-            // maker: maker,
-            // taker: taker,
-            // sender
-            salt: 42,
-        };
+        // let make_coin: [u8; 32] = coin.1.into();
+        // let take_coin: [u8; 32] = coin.1.into();
+        // // currently cant pass any friendly data in the predicate
+        // // data, so will just pass a byte array
+        // let order = LimitOrder {
+        //     maker_token: Bits256(make_coin),
+        //     taker_token: Bits256(take_coin),
+        //     maker_amount: coin.0,
+        //     taker_amount: coin.0,
+        //     // taker_token_fee: 0,
+        //     // maker: maker,
+        //     // taker: taker,
+        //     // sender
+        //     salt: 42,
+        // };
 
-        // major hackage here to get this to work with poor support for predicates
-        // in the SDK
-        let mut predicate_data = vec![];
-        predicate_data.push(make_coin.to_vec());
-        predicate_data.push(take_coin.to_vec());
-        let maker_amount: [u8; 8] = coin.0.to_be_bytes();
-        let taker_amount: [u8; 8] = coin.0.to_be_bytes();
-        predicate_data.push(maker_amount.to_vec());
-        predicate_data.push(taker_amount.to_vec());
+        // // major hackage here to get this to work with poor support for predicates
+        // // in the SDK
+        // let mut predicate_data = vec![];
+        // predicate_data.push(make_coin.to_vec());
+        // predicate_data.push(take_coin.to_vec());
+        // let maker_amount: [u8; 8] = coin.0.to_be_bytes();
+        // let taker_amount: [u8; 8] = coin.0.to_be_bytes();
+        // predicate_data.push(maker_amount.to_vec());
+        // predicate_data.push(taker_amount.to_vec());
 
-        let raw_arr = predicate_data.into_iter().flatten().collect();
-        taker
-            .receive_from_predicate(
-                predicate.address(),
-                predicate.code(),
-                coin.0,
-                coin.1,
-                Some(raw_arr),
-                TxParameters::default(),
-            )
-            .await
-            .unwrap();
+        // let raw_arr = predicate_data.into_iter().flatten().collect();
+        // taker
+        //     .receive_from_predicate(
+        //         predicate.address(),
+        //         predicate.code(),
+        //         coin.0,
+        //         coin.1,
+        //         Some(raw_arr),
+        //         TxParameters::default(),
+        //     )
+        //     .await
+        //     .unwrap();
 
-        // test these balances
-        let maker = maker.get_asset_balance(&coin.1).await.unwrap();
-        let taker = taker.get_asset_balance(&coin.1).await.unwrap();
-        println!("{:?}\n{:?}", maker, taker)
+        // // test these balances
+        // let maker = maker.get_asset_balance(&coin.1).await.unwrap();
+        // let taker = taker.get_asset_balance(&coin.1).await.unwrap();
+        // println!("{:?}\n{:?}", maker, taker)
     }
 }
 
