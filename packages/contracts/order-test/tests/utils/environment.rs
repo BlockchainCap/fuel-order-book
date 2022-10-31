@@ -62,31 +62,6 @@ pub async fn make_order(
     sign_and_call_tx(wallet, &mut tx).await
 }
 
-// pub async fn send_coins_to_predicate(
-//     wallet: &WalletUnlocked,
-//     predicate_root: Bech32Address,
-//     amount: u64,
-//     asset_id: AssetId,
-// ) -> (String, Vec<Receipt>) {
-// }
-
-pub async fn spend_predicate(
-    wallet: &WalletUnlocked,
-    predicate_root: Address,
-    amount: u64,
-    asset_id: AssetId,
-) -> (String, Vec<Receipt>) {
-    wallet
-        .transfer(
-            &Bech32Address::from(predicate_root),
-            amount,
-            asset_id,
-            TxParameters::default(),
-        )
-        .await
-        .unwrap()
-}
-
 pub async fn take_order(
     wallet: &WalletUnlocked,
     gas_coin: Input,

@@ -52,6 +52,15 @@ mod success {
         assert!(balance == 0);
         assert!(predicate_balance == coin.0);
 
+        let _receipt = env::take_order(&taker, coin_inputs[0].clone(), &vec![], &vec![]).await;
+        //
+        // 
+        // 
+        // 
+        // 
+        //  below here is drafting, doesnt actually work, above we use a script
+
+
         // spend the predicate with taker
         let make_coin: [u8; 32] = coin.1.into();
         let take_coin: [u8; 32] = coin.1.into();
@@ -91,6 +100,11 @@ mod success {
             )
             .await
             .unwrap();
+
+        // test these balances
+        let maker = maker.get_asset_balance(&coin.1).await.unwrap();
+        let taker = taker.get_asset_balance(&coin.1).await.unwrap();
+        println!("{:?}\n{:?}", maker, taker)
     }
 }
 
