@@ -13,14 +13,19 @@ pub async fn get_contract_message_predicate() -> (Vec<u8>, Address) {
     (predicate_bytecode, predicate_root)
 }
 mod success {
+    abigen!(
+        Order,
+        "packages/contracts/order-settle-contract/out/debug/order-settle-contract-abi.json"
+    );
+
     use fuels::{
         contract::predicate::Predicate,
-        prelude::{Bech32Address, TxParameters},
+        prelude::{abigen, Bits256, TxParameters},
         test_helpers::DEFAULT_COIN_AMOUNT,
         tx::AssetId,
     };
 
-    use crate::{get_contract_message_predicate, utils::environment as env, PREDICATE};
+    use crate::{utils::environment as env, PREDICATE};
 
     #[tokio::test]
     async fn test_limit_order_predicate() {
@@ -48,19 +53,40 @@ mod success {
         assert!(predicate_balance == coin.0);
 
         // spend the predicate with taker
+        let make_coin: [u8; 32] = coin.1.into();
+        let take_coin: [u8; 32] = coin.1.into();
+        // currently cant pass any friendly data in the predicate
+        // data, so will just pass a byte array
         let order = LimitOrder {
-             
+            maker_token: Bits256(make_coin),
+            taker_token: Bits256(take_coin),
+            maker_amount: coin.0,
+            taker_amount: coin.0,
+            // taker_token_fee: 0,
+            // maker: maker,
+            // taker: taker,
+            // sender
+            salt: 42,
         };
-        let mut predicate_data = Vec::new();
-        predicate_data.push(1);
+
+        // major hackage here to get this to work with poor support for predicates
+        // in the SDK
+        let mut predicate_data = vec![];
+        predicate_data.push(make_coin.to_vec());
+        predicate_data.push(take_coin.to_vec());
+        let maker_amount: [u8; 8] = coin.0.to_be_bytes();
+        let taker_amount: [u8; 8] = coin.0.to_be_bytes();
+        predicate_data.push(maker_amount.to_vec());
+        predicate_data.push(taker_amount.to_vec());
+
+        let raw_arr = predicate_data.into_iter().flatten().collect();
         taker
-            .spend_predicate(
+            .receive_from_predicate(
                 predicate.address(),
                 predicate.code(),
                 coin.0,
                 coin.1,
-                taker.address(),
-                Some(predicate_data),
+                Some(raw_arr),
                 TxParameters::default(),
             )
             .await

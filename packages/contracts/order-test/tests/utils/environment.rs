@@ -14,10 +14,10 @@ pub async fn setup_environment(
 ) -> (WalletUnlocked, WalletUnlocked, Vec<Input>, Provider) {
     let mut wallet = WalletUnlocked::new_random(None);
     let mut wallet2 = WalletUnlocked::new_random(None);
-    // give the wallets the funds they need. might need to have simple token contract to do minting
-    // Generate coins for wallet
-    let all_coins: Vec<(UtxoId, Coin)> =
+    let mut all_coins: Vec<(UtxoId, Coin)> =
         setup_single_asset_coins(wallet.address(), coin.1, 1, coin.0);
+    let mut coins2 = setup_single_asset_coins(wallet2.address(), coin.1, 1, coin.0);
+    all_coins.append(&mut coins2);
 
     // Create the client and provider
     let mut provider_config = Config::local_node();

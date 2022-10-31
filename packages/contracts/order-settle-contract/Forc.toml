@@ -5,4 +5,4 @@ license = "Apache-2.0"
 name = "order-settle-contract"
 
 [dependencies]
-order = "../order"
+order = {path = "../order"}

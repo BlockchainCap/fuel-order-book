@@ -1,23 +1,23 @@
 library order;
 
-pub enum Order {
-    Limit: LimitOrder,
-    RFQ: RFQOrder,
-    NFT: NFTOrder,
-}
+// pub enum Order {
+//     Limit: LimitOrder,
+//     RFQ: RFQOrder,
+//     NFT: NFTOrder,
+// }
 // inspired by the 0x limit order 
 pub struct LimitOrder {
     maker_token: b256, // using b256 for convenience, may be a bad idea
-    taker_token: b256, 
+    taker_token: b256,
     maker_amount: u64,
     taker_amount: u64,
-    taker_token_fee: u64,
-    maker: Address,
-    taker: Address,
-    sender: Address,
-    fee_recipient: Address,
+    // taker_token_fee: u64,
+    // maker: Address,
+    // taker: Address,
+    // sender: Address,
+    // fee_recipient: Address,
     // pool:  
-    expiry: u64,
+    // expiry: u64,
     salt: u64, // arbitrary salt for uniqueness in order hash
 }
 

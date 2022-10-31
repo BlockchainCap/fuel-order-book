@@ -1,8 +1,11 @@
 use fuels::{
-    prelude::TxParameters,
-    tx::{AssetId, Bytes32, Input, Output, Transaction, Address, Word},
+    prelude::{TxParameters, abigen},
+    tx::{Address, AssetId, Bytes32, Input, Output, Transaction, Word},
 };
-
+abigen!(
+    LimitOrderStruct,
+    "packages/contracts/order-settle-contract/out/debug/order-settle-contract-abi.json"
+);
 const MIN_GAS: u64 = 100_000;
 const MAKE_ORDER_SCRIPT_BINARY: &str = "../order-script/out/debug/order-script.bin";
 pub async fn get_make_order_script() -> Vec<u8> {
