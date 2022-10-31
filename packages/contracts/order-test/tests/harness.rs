@@ -50,7 +50,6 @@ mod success {
         // this is the way i should do this, check the script. probably need to add some
         // inputs to this
         let _receipt = env::take_order(&taker, coin_inputs[0].clone(), &vec![], &vec![]).await;
-
         //
         //
         //

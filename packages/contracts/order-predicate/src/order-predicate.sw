@@ -1,13 +1,15 @@
 predicate;
 use std::{b512::B512, constants::ZERO_B256, ecr::ec_recover_address, inputs::input_predicate_data};
 use order::*;
+
+// update this with the script for spending
 const SPENDING_SCRIPT_HASH = 0x7994ce111c78a2539cedce7ad0476b01089c6d7060095172e3f6df5a3564d949;
 // the constants that define each predicate. I would rather pass these as arguments, but i dont know how 
 // cant pass the hash because that causes circular dependency 
-fn main(take_coin: b256, take_amount: u64) -> bool {
+fn main(take_coin: b256, min_take_amount: u64) -> bool {
     let take_coin: b256 = 0x0000000000000000000000000000000000000000000000000000000000000000;
-    let take_amount: u64 = 10;
-    // parameterize these thing
+    let min_take_amount: u64 = 10;
+    // parameterize this thing
     // let order: LimitOrder = input_predicate_data(0);
     // probably just pass the hash directly, but it is useful to back out this data 
     // assert(sha256(order) == ORDER_HASH); // they passed some bs order 
@@ -15,10 +17,9 @@ fn main(take_coin: b256, take_amount: u64) -> bool {
     let input_coin_amount = input_coin_amount(0);
     assert(tx_script_bytecode_hash() == SPENDING_SCRIPT_HASH);
     assert(input_coin == take_coin);
-    assert(input_coin_amount >= take_amount);
-    // assert()
+    assert(input_coin_amount >= min_take_amount);
     // need to assert that there is an actually transfer 
-    // lets do this in a script 
+    let output_coin = output_coin_asset_id();
     true
 }
 
@@ -42,4 +43,17 @@ pub fn tx_script_bytecode_hash() -> b256 {
         s256 hash ptr len;
         hash: b256
     }
+}
+
+
+////////////
+// OUTPUT //
+////////////
+// /// Get the transaction outputs count
+// pub fn output_count() -> u64 {
+//     __gtf::<u64>(0, GTF_SCRIPT_OUTPUTS_COUNT)
+// }
+
+fn verify_output_coin() -> b256 {
+    __gtf::<u64>(index, GTF_OUTPUT_TYPE) == OUTPUT_TYPE_COIN
 }

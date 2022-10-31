@@ -45,31 +45,33 @@ pub async fn setup_environment(
     (wallet, wallet2, coin_inputs, provider)
 }
 
-pub async fn make_order(
-    wallet: &WalletUnlocked,
-    gas_coin: Input,
-    optional_inputs: &[Input],
-    optional_outputs: &[Output],
-) -> Vec<Receipt> {
-    let mut tx = build_make_order_tx(
-        gas_coin,
-        optional_inputs,
-        optional_outputs,
-        TxParameters::default(),
-    )
-    .await;
-
-    sign_and_call_tx(wallet, &mut tx).await
-}
+// pub async fn make_order(
+//     wallet: &WalletUnlocked,
+//     gas_coin: Input,
+//     optional_inputs: &[Input],
+//     optional_outputs: &[Output],
+// ) -> Vec<Receipt> {
+//     let mut tx = build_make_order_tx(
+//         gas_coin,
+//         optional_inputs,
+//         optional_outputs,
+//         TxParameters::default(),
+//     )
+//     .await;
+// 
+//     sign_and_call_tx(wallet, &mut tx).await
+// }
 
 pub async fn take_order(
     wallet: &WalletUnlocked,
     gas_coin: Input,
+    predicate_coins_input: Input,
     optional_inputs: &[Input],
     optional_outputs: &[Output],
 ) -> Vec<Receipt> {
     let mut tx = build_take_order_tx(
         gas_coin,
+        predicate_coins_input,
         optional_inputs,
         optional_outputs,
         TxParameters::default(),

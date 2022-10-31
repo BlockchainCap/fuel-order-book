@@ -6,11 +6,15 @@ use std::contract_id::ContractId;
 // need to calculate the predicate hash tho
 const predicate_root = ~Address::from(0x356d49ebdbdffb1c16d761d7b8c51865aa2ab5a7a9b716b0b75e426a3082ac2e);
 
+// to take an order need to send funds to the correct receiver address and then spend the predicate
+
 fn main() {
     let amount = input_coin_amount(0);
     let asset_id = input_coin_asset_id(0);
-    // transfer coins to the predicate root
-    transfer_to_address(amount, ~ContractId::from(asset_id), predicate_root);
+
+    // this thing needs to transfer some coins then spend the predicate 
+    
+
 }
 
 const GTF_INPUT_COIN_AMOUNT = 0x105;

@@ -12,7 +12,7 @@ pub struct LimitOrder {
     maker_amount: u64,
     taker_amount: u64,
     // taker_token_fee: u64,
-    // maker: Address,
+    maker: Address,
     // taker: Address,
     // sender: Address,
     // fee_recipient: Address,

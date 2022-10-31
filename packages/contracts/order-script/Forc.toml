@@ -1,6 +1,6 @@
 [project]
 authors = ["Ryan Sproule"]
-entry = "make-order.sw"
+entry = "order-script.sw"
 license = "Apache-2.0"
 name = "order-script"
 
