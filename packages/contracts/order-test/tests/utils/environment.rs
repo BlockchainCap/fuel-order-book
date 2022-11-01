@@ -1,14 +1,13 @@
+use super::builder::build_take_order_tx;
+use super::builder::LimitOrder;
 use fuel_core_interfaces::model::Coin;
 use fuels::{
     contract::script::Script,
-    prelude::{Bech32Address, Provider, TxParameters},
+    prelude::{Provider, TxParameters},
     signers::{Signer, WalletUnlocked},
     test_helpers::{setup_single_asset_coins, setup_test_client, Config},
     tx::{Address, AssetId, Input, Output, Receipt, Transaction, TxPointer, UtxoId, Word},
 };
-
-use super::builder::{build_make_order_tx, build_take_order_tx};
-
 pub async fn setup_environment(
     coin: (Word, AssetId),
 ) -> (WalletUnlocked, WalletUnlocked, Vec<Input>, Provider) {
@@ -45,24 +44,8 @@ pub async fn setup_environment(
     (wallet, wallet2, coin_inputs, provider)
 }
 
-// pub async fn make_order(
-//     wallet: &WalletUnlocked,
-//     gas_coin: Input,
-//     optional_inputs: &[Input],
-//     optional_outputs: &[Output],
-// ) -> Vec<Receipt> {
-//     let mut tx = build_make_order_tx(
-//         gas_coin,
-//         optional_inputs,
-//         optional_outputs,
-//         TxParameters::default(),
-//     )
-//     .await;
-// 
-//     sign_and_call_tx(wallet, &mut tx).await
-// }
-
 pub async fn take_order(
+    order: LimitOrder,
     wallet: &WalletUnlocked,
     gas_coin: Input,
     predicate_coins_input: Input,
@@ -70,6 +53,7 @@ pub async fn take_order(
     optional_outputs: &[Output],
 ) -> Vec<Receipt> {
     let mut tx = build_take_order_tx(
+        order,
         gas_coin,
         predicate_coins_input,
         optional_inputs,

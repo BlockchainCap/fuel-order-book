@@ -7,22 +7,23 @@ mod utils {
 
 const PREDICATE: &str = "../order-predicate/out/debug/order-predicate.bin";
 /// Gets the message to contract predicate
-pub async fn get_contract_message_predicate() -> (Vec<u8>, Address) {
+pub fn get_predicate() -> (Vec<u8>, Address) {
     let predicate_bytecode = std::fs::read(PREDICATE).unwrap();
     let predicate_root = Address::from(*Contract::root_from_code(&predicate_bytecode));
     (predicate_bytecode, predicate_root)
 }
 mod success {
-    abigen!(
-        Order,
-        "packages/contracts/order-settle-contract/out/debug/order-settle-contract-abi.json"
-    );
+    // abigen!(
+    //     Order,
+    //     "packages/contracts/order-settle-contract/out/debug/order-settle-contract-abi.json"
+    // );
 
+    use crate::{get_predicate, utils::builder::LimitOrder};
     use fuels::{
         contract::predicate::Predicate,
-        prelude::{abigen, Bits256, TxParameters},
+        prelude::{Bits256, Token, Tokenizable, TxParameters},
         test_helpers::DEFAULT_COIN_AMOUNT,
-        tx::AssetId,
+        tx::{AssetId, Input, TxPointer, UtxoId},
     };
 
     use crate::{utils::environment as env, PREDICATE};
@@ -33,11 +34,17 @@ mod success {
         // might need to init another coin to correctly simulate the make/take
         let (maker, taker, coin_inputs, provider) = env::setup_environment(coin).await;
         let predicate = Predicate::load_from(PREDICATE).unwrap();
+        let (predicate_bytecode, predicate_root) = get_predicate();
         // create the order (fund the predicate)
         let (_tx, _rec) = maker
             .transfer(predicate.address(), coin.0, coin.1, TxParameters::default())
             .await
             .unwrap();
+        // get the utx_
+        let predicate_coin = &provider
+            .get_coins(&predicate_root.into(), AssetId::default())
+            .await
+            .unwrap()[0];
 
         let balance = maker.get_asset_balance(&coin.1).await.unwrap();
         let predicate_balance = provider
@@ -49,7 +56,34 @@ mod success {
 
         // this is the way i should do this, check the script. probably need to add some
         // inputs to this
-        let _receipt = env::take_order(&taker, coin_inputs[0].clone(), &vec![], &vec![]).await;
+        let order = LimitOrder {
+            maker: maker.address().into(),
+            maker_amount: coin.0,
+            taker_amount: coin.0,
+            // this seems jank
+            maker_token: Bits256::from_token(Token::B256([0u8; 32])).unwrap(),
+            taker_token: Bits256::from_token(Token::B256([0u8; 32])).unwrap(),
+            salt: 42,
+        };
+        let predicate_coin_input = Input::CoinPredicate {
+            utxo_id: UtxoId::from(predicate_coin.utxo_id.clone()),
+            owner: predicate_root,
+            amount: coin.0,
+            asset_id: coin.1,
+            tx_pointer: TxPointer::default(),
+            maturity: 0,
+            predicate: predicate_bytecode,
+            predicate_data: vec![],
+        };
+        let _receipt = env::take_order(
+            order,
+            &taker,
+            coin_inputs[0].clone(),
+            predicate_coin_input,
+            &vec![],
+            &vec![],
+        )
+        .await;
         //
         //
         //

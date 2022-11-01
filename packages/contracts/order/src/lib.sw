@@ -7,7 +7,7 @@ library order;
 // }
 // inspired by the 0x limit order 
 pub struct LimitOrder {
-    maker_token: b256, // using b256 for convenience, may be a bad idea
+    maker_token: b256, // using b256 for convenience, may be a bad idea. 
     taker_token: b256,
     maker_amount: u64,
     taker_amount: u64,
@@ -21,6 +21,7 @@ pub struct LimitOrder {
     salt: u64, // arbitrary salt for uniqueness in order hash
 }
 
+//// NOT USING THESE YET 
 pub struct RFQOrder {
     maker_token: Address,
     taker_token: Address,
