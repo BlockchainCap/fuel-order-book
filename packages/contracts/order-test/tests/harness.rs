@@ -94,10 +94,12 @@ mod success {
             &vec![],
         )
         .await;
-        // // test these balances
+        // test these balances
         print_balances(&maker, &taker, predicate.address(), &provider, coin).await;
-        // assert!(maker == DEFAULT_COIN_AMOUNT);
-        // assert!(taker == DEFAULT_COIN_AMOUNT);
+        let maker = maker.get_asset_balance(&coin.1).await.unwrap();
+        let taker = taker.get_asset_balance(&coin.1).await.unwrap();
+        assert!(maker == DEFAULT_COIN_AMOUNT / 2);
+        assert!(taker == DEFAULT_COIN_AMOUNT);
         // assert!(pred_b == 0);
     }
 

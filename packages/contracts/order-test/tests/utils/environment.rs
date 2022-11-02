@@ -21,6 +21,7 @@ pub async fn setup_environment(
     // Create the client and provider
     let mut provider_config = Config::local_node();
     provider_config.predicates = true;
+    provider_config.utxo_validation = true;
     let (client, _) =
         setup_test_client(all_coins.clone(), Vec::new(), Some(provider_config), None).await;
     let provider = Provider::new(client);
