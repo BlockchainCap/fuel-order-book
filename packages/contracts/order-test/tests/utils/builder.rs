@@ -15,7 +15,7 @@ pub async fn get_take_order_script() -> Vec<u8> {
 }
 
 pub async fn build_take_order_tx(
-    order: LimitOrder,
+    order: &LimitOrder,
     taker: Address,
     gas_coin: Input,
     predicate_coins_input: Input,

@@ -17,7 +17,7 @@ fn main(take_coin: b256, min_take_amount: u64, maker: b256) -> bool {
     let take_coin: b256 = 0x0000000000000000000000000000000000000000000000000000000000000000;
     let min_take_amount: u64 = 500000000;
     // this needs to be based on who is making the order 
-    let maker: b256 = 0x0000000000000000000000000000000000000000000000000000000000000000;
+    let maker: b256 = 0xb1c6067c6663708d831ef3d10edf0aa4d6c14f077fc7f41f5535a30435e7cd78;
     // parameterize this thing
     // let order: LimitOrder = input_predicate_data(0);
     // probably just pass the hash directly, but it is useful to back out this data 
@@ -36,7 +36,7 @@ fn main(take_coin: b256, min_take_amount: u64, maker: b256) -> bool {
 
     // this is the one that is failing, its because maker above is set to 0, which is incorrect
     // just need to pass this thing in args (along with all other params)
-    // assert(output_coin_to(OUTPUT_COIN_INDEX) == maker);
+    assert(output_coin_to(OUTPUT_COIN_INDEX) == maker);
     true
 }
 

@@ -1,5 +1,8 @@
+use std::mem::size_of;
+
 use super::builder::build_take_order_tx;
 use super::builder::LimitOrder;
+use fuel_core_interfaces::common::fuel_crypto::SecretKey;
 use fuel_core_interfaces::model::Coin;
 use fuels::{
     contract::script::Script,
@@ -11,7 +14,15 @@ use fuels::{
 pub async fn setup_environment(
     coin: (Word, AssetId),
 ) -> (WalletUnlocked, WalletUnlocked, Vec<Input>, Provider) {
-    let mut wallet = WalletUnlocked::new_random(None);
+    const SIZE_SECRET_KEY: usize = size_of::<SecretKey>();
+    const PADDING_BYTES: usize = SIZE_SECRET_KEY - size_of::<u64>();
+    let mut secret_key: [u8; SIZE_SECRET_KEY] = [0; SIZE_SECRET_KEY];
+    secret_key[PADDING_BYTES..].copy_from_slice(&(8320147306839812359u64).to_be_bytes());
+    let mut wallet = WalletUnlocked::new_from_private_key(
+        SecretKey::try_from(secret_key.as_slice())
+            .expect("This should never happen as we provide a [u8; SIZE_SECRET_KEY] array"),
+        None,
+    );
     let mut wallet2 = WalletUnlocked::new_random(None);
     let mut all_coins: Vec<(UtxoId, Coin)> =
         setup_single_asset_coins(wallet.address(), coin.1, 1, coin.0);
@@ -46,7 +57,7 @@ pub async fn setup_environment(
 }
 
 pub async fn take_order(
-    order: LimitOrder,
+    order: &LimitOrder,
     wallet: &WalletUnlocked,
     gas_coin: Input,
     predicate_coins_input: Input,
