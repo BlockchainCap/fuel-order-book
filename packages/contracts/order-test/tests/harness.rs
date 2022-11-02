@@ -13,15 +13,12 @@ pub fn get_predicate() -> (Vec<u8>, Address) {
     (predicate_bytecode, predicate_root)
 }
 mod success {
-    // abigen!(
-    //     Order,
-    //     "packages/contracts/order-settle-contract/out/debug/order-settle-contract-abi.json"
-    // );
 
     use crate::{get_predicate, utils::builder::LimitOrder};
     use fuels::{
         contract::predicate::Predicate,
-        prelude::{Bits256, Token, Tokenizable, TxParameters},
+        prelude::{Bech32Address, Bits256, Provider, Token, Tokenizable, TxParameters},
+        signers::WalletUnlocked,
         test_helpers::DEFAULT_COIN_AMOUNT,
         tx::{AssetId, Input, TxPointer, UtxoId},
     };
@@ -36,16 +33,15 @@ mod success {
         let predicate = Predicate::load_from(PREDICATE).unwrap();
         let (predicate_bytecode, predicate_root) = get_predicate();
         // create the order (fund the predicate)
+        print_balances(&maker, &taker, predicate.address(), &provider, coin).await;
         let (_tx, _rec) = maker
             .transfer(predicate.address(), coin.0, coin.1, TxParameters::default())
             .await
             .unwrap();
-        // get the utx_
         let predicate_coin = &provider
             .get_coins(&predicate_root.into(), AssetId::default())
             .await
             .unwrap()[0];
-
         let balance = maker.get_asset_balance(&coin.1).await.unwrap();
         let predicate_balance = provider
             .get_asset_balance(predicate.address(), coin.1)
@@ -59,8 +55,7 @@ mod success {
         let order = LimitOrder {
             maker: maker.address().into(),
             maker_amount: coin.0,
-            taker_amount: coin.0,
-            // this seems jank
+            taker_amount: coin.0 / 2,
             maker_token: Bits256::from_token(Token::B256([0u8; 32])).unwrap(),
             taker_token: Bits256::from_token(Token::B256([0u8; 32])).unwrap(),
             salt: 42,
@@ -75,66 +70,56 @@ mod success {
             predicate: predicate_bytecode,
             predicate_data: vec![],
         };
+        print_balances(&maker, &taker, predicate.address(), &provider, coin).await;
+        let input_coins = &provider
+            .get_coins(&taker.address(), AssetId::default())
+            .await
+            .unwrap()[0];
+        let signed_coin_input = Input::CoinSigned {
+            utxo_id: UtxoId::from(input_coins.utxo_id.clone()),
+            owner: taker.address().into(),
+            amount: input_coins.amount.clone().into(),
+            asset_id: input_coins.asset_id.clone().into(),
+            tx_pointer: TxPointer::default(),
+            witness_index: 0,
+            maturity: 0,
+        };
         let _receipt = env::take_order(
             order,
             &taker,
             coin_inputs[0].clone(),
             predicate_coin_input,
-            &vec![],
+            &vec![signed_coin_input],
+            // &vec![],
             &vec![],
         )
         .await;
-        //
-        //
-        //
-        //
-        //
-        //  below here is drafting, doesnt actually work, above we use a script
-
-        // spend the predicate with taker
-        // let make_coin: [u8; 32] = coin.1.into();
-        // let take_coin: [u8; 32] = coin.1.into();
-        // // currently cant pass any friendly data in the predicate
-        // // data, so will just pass a byte array
-        // let order = LimitOrder {
-        //     maker_token: Bits256(make_coin),
-        //     taker_token: Bits256(take_coin),
-        //     maker_amount: coin.0,
-        //     taker_amount: coin.0,
-        //     // taker_token_fee: 0,
-        //     // maker: maker,
-        //     // taker: taker,
-        //     // sender
-        //     salt: 42,
-        // };
-
-        // // major hackage here to get this to work with poor support for predicates
-        // // in the SDK
-        // let mut predicate_data = vec![];
-        // predicate_data.push(make_coin.to_vec());
-        // predicate_data.push(take_coin.to_vec());
-        // let maker_amount: [u8; 8] = coin.0.to_be_bytes();
-        // let taker_amount: [u8; 8] = coin.0.to_be_bytes();
-        // predicate_data.push(maker_amount.to_vec());
-        // predicate_data.push(taker_amount.to_vec());
-
-        // let raw_arr = predicate_data.into_iter().flatten().collect();
-        // taker
-        //     .receive_from_predicate(
-        //         predicate.address(),
-        //         predicate.code(),
-        //         coin.0,
-        //         coin.1,
-        //         Some(raw_arr),
-        //         TxParameters::default(),
-        //     )
-        //     .await
-        //     .unwrap();
-
         // // test these balances
-        // let maker = maker.get_asset_balance(&coin.1).await.unwrap();
-        // let taker = taker.get_asset_balance(&coin.1).await.unwrap();
-        // println!("{:?}\n{:?}", maker, taker)
+        print_balances(&maker, &taker, predicate.address(), &provider, coin).await;
+        // assert!(maker == DEFAULT_COIN_AMOUNT);
+        // assert!(taker == DEFAULT_COIN_AMOUNT);
+        // assert!(pred_b == 0);
+    }
+
+    // for debugging purposes
+    async fn print_balances(
+        maker: &WalletUnlocked,
+        taker: &WalletUnlocked,
+        predicate_address: &Bech32Address,
+        provider: &Provider,
+        coin: (u64, AssetId),
+    ) {
+        let maker = maker.get_asset_balance(&coin.1).await.unwrap();
+        let taker = taker.get_asset_balance(&coin.1).await.unwrap();
+        let pred_b = provider
+            .get_asset_balance(predicate_address, coin.1)
+            .await
+            .unwrap();
+        println!("----------- COINS ----------");
+        println!("Maker balance after: {:?}", maker);
+        println!("Taker balance after: {:?}", taker);
+        println!("Predicate balance after: {:?}", pred_b);
+        println!("----------------------------");
     }
 }
 

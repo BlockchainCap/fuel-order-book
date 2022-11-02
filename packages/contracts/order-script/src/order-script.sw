@@ -11,10 +11,7 @@ const predicate_root = ~Address::from(0x55af381775fabd6de7f25013a794ffc02e60ab94
 fn main() {
     let amount = input_coin_amount(0);
     let asset_id = input_coin_asset_id(0);
-
     // this thing needs to transfer some coins then spend the predicate 
-    
-
 }
 
 const GTF_INPUT_COIN_AMOUNT = 0x105;

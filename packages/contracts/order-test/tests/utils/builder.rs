@@ -1,6 +1,6 @@
 use fuels::{
     prelude::{abigen, TxParameters},
-    tx::{AssetId, Input, Output, Transaction},
+    tx::{Address, AssetId, Input, Output, Transaction},
 };
 abigen!(
     LimitOrderStruct,
@@ -16,6 +16,7 @@ pub async fn get_take_order_script() -> Vec<u8> {
 
 pub async fn build_take_order_tx(
     order: LimitOrder,
+    taker: Address,
     gas_coin: Input,
     predicate_coins_input: Input,
     optional_inputs: &[Input],
@@ -23,11 +24,10 @@ pub async fn build_take_order_tx(
     params: TxParameters,
 ) -> Transaction {
     let script_bytecode = get_take_order_script().await;
-
     // build the tx inputs
     let mut tx_inputs: Vec<Input> = Vec::new();
     tx_inputs.push(predicate_coins_input);
-    tx_inputs.push(gas_coin);
+    // tx_inputs.push(gas_coin);
     tx_inputs.append(&mut optional_inputs.to_vec());
 
     // build the tx outputs:
@@ -39,9 +39,15 @@ pub async fn build_take_order_tx(
     // i think i can just use a coin output here, not sure why I would need variable
     tx_outputs.push(Output::Coin {
         to: order.maker,
-        amount: order.maker_amount,
-        asset_id: AssetId::from(order.maker_token.0),
+        amount: order.taker_amount,
+        asset_id: AssetId::from(order.taker_token.0),
     });
+    tx_outputs.push(Output::Coin {
+        to: taker,
+        amount: order.maker_amount,
+        asset_id: AssetId::from(order.taker_token.0),
+    });
+    tx_outputs.append(&mut optional_outputs.to_vec());
 
     Transaction::Script {
         gas_price: params.gas_price,

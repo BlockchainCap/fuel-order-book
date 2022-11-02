@@ -15,7 +15,7 @@ pub async fn setup_environment(
     let mut wallet2 = WalletUnlocked::new_random(None);
     let mut all_coins: Vec<(UtxoId, Coin)> =
         setup_single_asset_coins(wallet.address(), coin.1, 1, coin.0);
-    let mut coins2 = setup_single_asset_coins(wallet2.address(), coin.1, 1, coin.0);
+    let mut coins2 = setup_single_asset_coins(wallet2.address(), coin.1, 1, coin.0 / 2);
     all_coins.append(&mut coins2);
 
     // Create the client and provider
@@ -54,6 +54,7 @@ pub async fn take_order(
 ) -> Vec<Receipt> {
     let mut tx = build_take_order_tx(
         order,
+        wallet.address().into(),
         gas_coin,
         predicate_coins_input,
         optional_inputs,
