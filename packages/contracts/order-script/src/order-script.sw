@@ -4,10 +4,9 @@ use std::contract_id::ContractId;
 
 // the create order script just send coins to a predicate
 // need to calculate the predicate hash tho
-const predicate_root = ~Address::from(0x55af381775fabd6de7f25013a794ffc02e60ab948deeac3bc4a9db27003e9084);
+const predicate_root = Address::from(0x55af381775fabd6de7f25013a794ffc02e60ab948deeac3bc4a9db27003e9084);
 
 // to take an order need to send funds to the correct receiver address and then spend the predicate
-
 fn main() {
     let amount = input_coin_amount(0);
     let asset_id = input_coin_asset_id(0);
