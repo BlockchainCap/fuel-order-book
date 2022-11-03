@@ -30,13 +30,8 @@ pub async fn build_take_order_tx(
     // tx_inputs.push(gas_coin);
     tx_inputs.append(&mut optional_inputs.to_vec());
 
-    // build the tx outputs:
-    // 1. Output coin is the maker
+    // build the tx outputs 
     let mut tx_outputs: Vec<Output> = Vec::new();
-    // enforce that the output of the transaction
-    // means the maker gets paid the correct amount
-    // the predicate will enforce this.
-    // i think i can just use a coin output here, not sure why I would need variable
     tx_outputs.push(Output::Coin {
         to: order.maker,
         amount: order.taker_amount,

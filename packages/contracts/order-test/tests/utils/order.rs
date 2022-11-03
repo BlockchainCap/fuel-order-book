@@ -21,7 +21,6 @@ pub async fn create_order(
     let predicate = Predicate::load_from(PREDICATE).unwrap();
     let (predicate_bytecode, predicate_root) = get_predicate();
     // create the order (fund the predicate)
-    // print_balances(&maker, &taker, predicate.address(), &provider, coin).await;
     let (_tx, _rec) = maker
         .transfer(
             predicate.address(),

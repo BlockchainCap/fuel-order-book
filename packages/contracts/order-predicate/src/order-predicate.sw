@@ -10,25 +10,27 @@ use order::*;
 
 // update this with the script for spending
 const SPENDING_SCRIPT_HASH = 0xf7b2f6690ccb273d65fa54e6e02be86c03d6e55c21367fc855e9366720c317f8;
+const MIN_GAS = 1_200_000;
 // the constants that define each predicate. I would rather pass these as arguments, but i dont know how 
 const OUTPUT_COIN_INDEX = 0u8;
-// cant pass the hash because that causes circular dependency 
 fn main(take_coin: b256, min_take_amount: u64, maker: b256) -> bool {
+    // parameterize this thing
     let take_coin: b256 = 0x0000000000000000000000000000000000000000000000000000000000000000;
     let min_take_amount: u64 = 500000000;
     // this needs to be based on who is making the order 
     let maker: b256 = 0xb1c6067c6663708d831ef3d10edf0aa4d6c14f077fc7f41f5535a30435e7cd78;
-    // parameterize this thing
-    // let order: LimitOrder = input_predicate_data(0);
-    // probably just pass the hash directly, but it is useful to back out this data 
-    // assert(sha256(order) == ORDER_HASH); // they passed some bs order 
-    let input_coin = input_coin_asset_id(0);
-    let input_coin_amount = input_coin_amount(0);
+    let taker_coin = input_coin_asset_id(0);
+    let taker_amount = input_coin_amount(0);
+    // todo: The gas coin stuff
+    // let gas_coin = input_coin_asset_id(1);
+    // let gas_coin_amount = input_coin_amount(1);
     assert(tx_script_bytecode_hash() == SPENDING_SCRIPT_HASH);
-    assert(input_coin == take_coin); // this 
-    assert(input_coin_amount >= min_take_amount); // need this to be the sum of all the inputs 
+    assert(taker_coin == take_coin); // this 
+    assert(taker_amount >= min_take_amount); // need this to be the sum of all the inputs 
+        // Verify there is a minimum amount of gas to process message
+    // assert(gas_coin_amount >= tx_gas_price() * MIN_GAS);
+    // assert(tx_gas_limit() >= MIN_GAS);
     // include gas, predicate amount, and the send to maker amount
-
     assert(output_count() == 2);
     assert(verify_output_coin(OUTPUT_COIN_INDEX));
     assert(output_coin_asset_id(OUTPUT_COIN_INDEX) == take_coin);
@@ -40,6 +42,9 @@ fn main(take_coin: b256, min_take_amount: u64, maker: b256) -> bool {
     true
 }
 
+////////////
+// Inuput //
+////////////
 const GTF_INPUT_COIN_AMOUNT = 0x105;
 const GTF_INPUT_COIN_ASSET_ID = 0x106;
 const GTF_SCRIPT_SCRIPT_LENGTH = 0x005;
@@ -60,6 +65,17 @@ pub fn tx_script_bytecode_hash() -> b256 {
         s256 hash ptr len;
         hash: b256
     }
+}
+const GTF_SCRIPT_GAS_PRICE = 0x002;
+const GTF_SCRIPT_GAS_LIMIT = 0x003;
+/// Get the transaction gas price
+pub fn tx_gas_price() -> u64 {
+    __gtf::<u64>(0, GTF_SCRIPT_GAS_PRICE)
+}
+
+/// Get the transaction gas price
+pub fn tx_gas_limit() -> u64 {
+    __gtf::<u64>(0, GTF_SCRIPT_GAS_LIMIT)
 }
 
 ////////////
