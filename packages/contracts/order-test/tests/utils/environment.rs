@@ -11,6 +11,13 @@ use fuels::{
     test_helpers::{setup_single_asset_coins, setup_test_client, Config},
     tx::{Address, AssetId, Input, Output, Receipt, Transaction, TxPointer, UtxoId, Word},
 };
+
+// abigen!(
+//     OrderSettler,
+//     "packages/contracts/order-settle-contract/out/debug/order-settle-contract-abi.json"
+// );
+// pub const ORDER_BOOK_CONTRACT_BINARY: &str =
+//     "packages/contracts/order-settle-contract/out/debug/order-settle-contract.bin";
 pub async fn setup_environment(
     coin: (Word, AssetId),
 ) -> (WalletUnlocked, WalletUnlocked, Vec<Input>, Provider) {
@@ -53,6 +60,25 @@ pub async fn setup_environment(
             maturity: 0,
         })
         .collect();
+    // Build contract input
+    // Deploy the target contract used for testing processing messages
+    // let test_contract_id = Contract::deploy(
+    //     TEST_RECEIVER_CONTRACT_BINARY,
+    //     &wallet,
+    //     TxParameters::default(),
+    //     StorageConfiguration::default(),
+    // )
+    // .await
+    // .unwrap();
+    // let test_contract =
+    //     TestContractBuilder::new(test_contract_id.to_string(), wallet.clone()).build();
+    // let contract_input = Input::Contract {
+    //     utxo_id: UtxoId::new(Bytes32::zeroed(), 0u8),
+    //     balance_root: Bytes32::zeroed(),
+    //     state_root: Bytes32::zeroed(),
+    //     tx_pointer: TxPointer::default(),
+    //     contract_id: test_contract_id.into(),
+    // };
     (wallet, wallet2, coin_inputs, provider)
 }
 

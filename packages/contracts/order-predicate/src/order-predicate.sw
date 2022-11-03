@@ -9,7 +9,7 @@ use std::{
 use order::*;
 
 // update this with the script for spending
-const SPENDING_SCRIPT_HASH = 0xec04afe69a0ff8dc93246264540b4c65b046d902b924a26527c3705da76c0a5d;
+const SPENDING_SCRIPT_HASH = 0x7895d0059c0d0c1de8de15795191a1c1d01cd970db75fa42e15dc96e051b5570;
 // const MIN_GAS = 1_200_000;
 // the constants that define each predicate. I would rather pass these as arguments, but i dont know how 
 const OUTPUT_COIN_INDEX = 0u8;

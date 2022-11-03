@@ -1,25 +1,22 @@
 script;
 use std::token::transfer_to_address;
 use std::contract_id::ContractId;
-
-// the create order script just send coins to a predicate
-// need to calculate the predicate hash tho
-const predicate_root = Address::from(0x55af381775fabd6de7f25013a794ffc02e60ab948deeac3bc4a9db27003e9084);
-
-// to take an order need to send funds to the correct receiver address and then spend the predicate
+use order::{LimitOrder, OrderSettler};
+// use order
 fn main() {
-    let amount = input_coin_amount(0);
-    let asset_id = input_coin_asset_id(0);
-    // this thing needs to transfer some coins then spend the predicate 
+    
 }
-
-const GTF_INPUT_COIN_AMOUNT = 0x105;
-const GTF_INPUT_COIN_ASSET_ID = 0x106;
-pub fn input_coin_asset_id(index: u64) -> b256 {
-    __gtf::<b256>(index, GTF_INPUT_COIN_ASSET_ID)
-}
-
-/// Get the amount of a coin input
-pub fn input_coin_amount(index: u64) -> u64 {
-    __gtf::<u64>(index, GTF_INPUT_COIN_AMOUNT)
-}
+   // unnessesary but maybe a UX or DA thing is to post an event will each order 
+   // so that indexers have a picture of the order book. The predicates getting filled on chain 
+   // is not enough. That is equivalent to reversing a hash.
+    // let contract_address = 0xec04afe69a0ff8dc93246264540b4c65b046d902b924a26527c3705da76c0a5d;
+    // let order_book = abi(OrderSettler, contract_address);
+    // let order = LimitOrder {
+    //     maker: Address::from(0xb1c6067c6663708d831ef3d10edf0aa4d6c14f077fc7f41f5535a30435e7cd78),
+    //     maker_amount: 1_000_000_000,
+    //     taker_amount: 500_000_000,
+    //     maker_token: 0x0000000000000000000000000000000000000000000000000000000000000000,
+    //     taker_token: 0x0000000000000000000000000000000000000000000000000000000000000000,
+    //     salt: 43,
+    // };
+    // order_book.take(order);

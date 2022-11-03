@@ -1,10 +1,19 @@
 contract;
-use order::LimitOrder;
+use std::logging::log;
+use order::{LimitOrder, OrderSettler};
 
-abi OrderSettler {
-    fn take(order: LimitOrder);
+struct MakeOrder {
+    order: LimitOrder,
+}
+struct TakeOrder {
+    order: LimitOrder,
 }
 
 impl OrderSettler for Contract {
-    fn take(order: LimitOrder) {}
+    fn take(order: LimitOrder) {
+        log(TakeOrder { order })
+    }
+    fn make(order: LimitOrder) {
+        log(MakeOrder { order })
+    }
 }

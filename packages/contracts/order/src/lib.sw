@@ -1,5 +1,8 @@
 library order;
-
+abi OrderSettler {
+    fn take(order: LimitOrder);
+    fn make(order: LimitOrder);
+}
 // pub enum Order {
 //     Limit: LimitOrder,
 //     RFQ: RFQOrder,
