@@ -18,8 +18,8 @@ _Truly exciting stuff_
 
 ## The Tradeoff Space
 
-| DEX type             | Trustless | Censorship resistance | avoid state updates? | permissionless market making? |
-| -------------------- | --------- | --------------------- | -------------------- | ----------------------------- |
-| AMM                  | ✅         | ✅                     | ❌                    | N/A                           |
-| 0x Style Order Book  | ✅         | ❌                     | ✅                    | ❌                             |
-| Predicate Order Book | ✅         | ✅                     | ✅                    | ✅                             |
+| DEX type             | Trustless | Censorship resistance | no smart contract | permissionless market making? |
+| -------------------- | --------- | --------------------- | ----------------- | ----------------------------- |
+| AMM                  | ✅         | ✅                     | ❌                 | N/A                           |
+| 0x Style Order Book  | ✅         | ❌                     | ✅                 | ❌                             |
+| Predicate Order Book | ✅         | ✅                     | ✅                 | ✅                             |
