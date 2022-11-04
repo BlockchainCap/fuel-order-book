@@ -15,3 +15,11 @@ if you can provide the bytecode that generates that hash AND have it evaluate to
 When executing the order, you just need the tx to make the predicate return true.
 
 _Truly exciting stuff_
+
+## The Tradeoff Space
+
+| DEX type             | Trustless | Censorship resistance | avoid state updates? | permissionless market making? |
+| -------------------- | --------- | --------------------- | -------------------- | ----------------------------- |
+| AMM                  | ✅         | ✅                     | ❌                    | N/A                           |
+| 0x Style Order Book  | ✅         | ❌                     | ✅                    | ❌                             |
+| Predicate Order Book | ✅         | ✅                     | ✅                    | ✅                             |
