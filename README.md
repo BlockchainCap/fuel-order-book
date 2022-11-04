@@ -7,7 +7,7 @@ The counter-party discovery / order matching is out of scope.
 
 - [ ] figure out how to dynamically construct a predicate,
 - [ ] frontend integration
-- [ ] index the orders for market makers
+- [ ] index the orders for market makers, UIs and takers
 
 ----
 
@@ -46,3 +46,13 @@ Predicate order book gets all the capital efficiency advantages of a CLOB and do
 | AMM                  | ✅         | ✅                     | ❌                 | N/A                           |
 | 0x Style Order Book  | ✅         | ❌                     | ✅                 | ❌                             |
 | Predicate Order Book | ✅         | ✅                     | ✅                 | ✅                             |
+
+### Possible but not yet implemented features
+
+- partial order filling
+- order cancellation
+- expiry?
+- more complex orders
+  - NFT orders
+  - RFQ orders
+  - ... actually, the predicate is just code, so the complexity of these orders are really limitless. The only caveat is that they cannot reaaally be state dependant without some crazy state proof mechanism
