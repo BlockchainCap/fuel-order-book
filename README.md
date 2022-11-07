@@ -41,12 +41,12 @@ Predicate order book gets all the capital efficiency advantages of a CLOB and do
 
 ## The Tradeoff Space
 
-| DEX type                         | Trustless | Censorship resistance | regulation resistant | capital efficient | non-state bloater |
-| -------------------------------- | --------- | --------------------- | -------------------- | ----------------- | ----------------- |
-| CEX                              | ❌         | ❌                     | ❌                    | ✅                 | N/A               |
-| 0x/DyDx/opensea Style Order Book | ✅         | ❌                     | ❌                    | ✅                 | ✅                 |
-| AMM                              | ✅         | ✅                     | ✅                    | ❌                 | ❌                 |
-| Predicate Order Book             | ✅         | ✅                     | ✅                    | ✅                 | ✅                 |
+| Exchange Type                    | Trustless | Censorship resistance | regulation resistant | capital efficient | Avoids state bloat |
+| -------------------------------- | --------- | --------------------- | -------------------- | ----------------- | ------------------ |
+| CEX                              | ❌         | ❌                     | ❌                    | ✅                 | N/A                |
+| 0x/DyDx/opensea Style Order Book | ✅         | ❌                     | ❌                    | ✅                 | ✅                  |
+| AMM                              | ✅         | ✅                     | ✅                    | ❌                 | ❌                  |
+| Predicate Order Book             | ✅         | ✅                     | ✅                    | ✅                 | ✅                  |
 
 ## Possible but not yet implemented features
 
