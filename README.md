@@ -58,8 +58,6 @@ Predicate order book gets all the capital efficiency advantages of a CLOB and do
   - RFQ orders
   - ... actually, the predicate is just code, so the complexity of these orders are really limitless. The only caveat is that they cannot reaaally be state dependant without some crazy state proof mechanism
 
-----
-
 ## Illustration of the trade
 
 ```mermaid
