@@ -57,3 +57,26 @@ Predicate order book gets all the capital efficiency advantages of a CLOB and do
   - NFT orders
   - RFQ orders
   - ... actually, the predicate is just code, so the complexity of these orders are really limitless. The only caveat is that they cannot reaaally be state dependant without some crazy state proof mechanism
+
+----
+
+## Illustration of the trade
+
+```mermaid
+
+sequenceDiagram
+    participant Alice
+    participant OrderPredicate
+    participant Bob
+    Note left of Alice: Balance A: 10 <br/> Balance B: 0
+    Note right of Bob: Balance A: 0 <br/> Balance B: 10
+    Alice->>OrderPredicate: CreateOrder (send funds to predicate root)
+    Note left of Alice: Balance A: 0 <br/> Balance B: 0
+    Bob->>OrderPredicate: TakeOrder (send transaction with explicit input + outputs)
+    Note right of OrderPredicate: Check if transaction body satisfies <br/> predicate spending condition
+    OrderPredicate->>Alice: Receive B coins from Bob
+    OrderPredicate->>Bob: Spend predicate's A coins (can send to self)
+    Note left of Alice: Balance A: 0 <br/> Balance B: 10
+    Note right of Bob: Balance A: 10 <br/> Balance B: 0
+
+```
