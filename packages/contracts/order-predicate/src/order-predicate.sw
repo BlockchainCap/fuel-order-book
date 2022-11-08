@@ -13,8 +13,8 @@ const SPENDING_SCRIPT_HASH = 0x7895d0059c0d0c1de8de15795191a1c1d01cd970db75fa42e
 // const MIN_GAS = 1_200_000;
 // the constants that define each predicate. I would rather pass these as arguments, but i dont know how 
 const OUTPUT_COIN_INDEX = 0u8;
-fn main(take_coin: b256, min_take_amount: u64, maker: b256) -> bool {
-    // parameterize this thing
+fn main(order: LimitOrder) -> bool {
+    // parameterize this thing, passing arguments to the predicate should work but they might lack support on the 
     let order = LimitOrder {
         maker: Address::from(0xb1c6067c6663708d831ef3d10edf0aa4d6c14f077fc7f41f5535a30435e7cd78),
         maker_amount: 1_000_000_000,

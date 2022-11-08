@@ -21,12 +21,14 @@ pub async fn create_order(
     let predicate = Predicate::load_from(PREDICATE).unwrap();
     let (predicate_bytecode, predicate_root) = get_predicate();
     // create the order (fund the predicate)
+    let mut tx_params = TxParameters::default();
+    tx_params.gas_price = 1;
     let (_tx, _rec) = maker
         .transfer(
             predicate.address(),
             order.maker_amount,
             AssetId::from(order.maker_token.0),
-            TxParameters::default(),
+            tx_params,
         )
         .await
         .unwrap();
